@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'IOTMonitoringServer.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "iot_data",  # Nombre de la base de datos
+        "NAME": "iot_data_demo",  # Nombre de la base de datos
         "USER": "dbadmin",  # Nombre de usuario
         "PASSWORD": "uniandesIOT1234*",  # Contraseña
         "HOST": "18.213.111.179",  # Dirección IP de la base de datos
