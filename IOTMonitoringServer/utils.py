@@ -115,20 +115,6 @@ def loadCSV():
 
 
 """
-Clase cron para actualizar el CSV cada cierto tiempo
-"""
-
-
-class UpdateCSVCron(CronJobBase):
-    RUN_EVERY_MINS = 1
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = "realtimeMonitoring.updateCSVCronJob"
-
-    def do(self):
-        updateCSVFile()
-
-
-"""
 Función auxiliar para obtener la última linea de un archivo.
 """
 
