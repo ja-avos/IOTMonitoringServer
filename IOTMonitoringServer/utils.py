@@ -12,6 +12,7 @@ from receiver.models import (
 from django.contrib.auth.models import User as AuthUser
 from django.db.models import Max, Sum
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import datetime as datetimelib
 import ssl
 import random
@@ -195,7 +196,7 @@ def generateMockData(quantity: int = 500000):
             qty += 1
 
     data_per_day = 1000
-    initial_date = datetime.now() - timedelta(months=1)
+    initial_date = datetime.now() - relativedelta(months=1)
     interval = ((24 * 60 * 60 * 1000) / data_per_day) // 1
 
     print("Init date: ", initial_date)
