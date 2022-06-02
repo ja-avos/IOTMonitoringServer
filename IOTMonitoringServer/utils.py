@@ -11,7 +11,6 @@ from receiver.models import (
 )
 from django.contrib.auth.models import User as AuthUser
 from django.db.models import Max, Sum
-from ldap3 import Server, Connection, ALL, SUBTREE, Tls, NTLM
 from datetime import datetime, timedelta
 import datetime as datetimelib
 import ssl
