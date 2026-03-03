@@ -107,7 +107,7 @@ def check_fires():
 
 def send_message(message: Message, country: str, state: str, city: str, user: str):
     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
-    print(datetime.now(), "Sending message to {}: {}".format(topic, message.payload))
+    print(datetime.now(), "Sending message to {}: {}".format(topic, message.payload), flush=True)
     client.publish(topic, message.payload)
 
 def analyze_data():
@@ -115,7 +115,7 @@ def analyze_data():
     # Compara el promedio con los valores límite que están en la base de datos para esa variable.
     # Si el promedio se excede de los límites, se envia un mensaje de alerta.
 
-    print("Calculando alertas...")
+    print("Calculando alertas...", flush=True)
 
     alerts = []
 
@@ -126,14 +126,14 @@ def analyze_data():
     for item in alerts:
         send_message(item["message"], item["country"], item["state"], item["city"], item["user"])
 
-    print(alerts, "alertas enviadas")
+    print(alerts, "alertas enviadas", flush=True)
 
 
 def on_connect(client, userdata, flags, rc):
     '''
     Función que se ejecuta cuando se conecta al bróker.
     '''
-    print("Conectando al broker MQTT...", mqtt.connack_string(rc))
+    print("Conectando al broker MQTT...", mqtt.connack_string(rc), flush=True)
 
 
 def on_disconnect(client: mqtt.Client, userdata, rc):
@@ -141,8 +141,8 @@ def on_disconnect(client: mqtt.Client, userdata, rc):
     Función que se ejecuta cuando se desconecta del broker.
     Intenta reconectar al bróker.
     '''
-    print("Desconectado con mensaje:" + str(mqtt.connack_string(rc)))
-    print("Reconectando...")
+    print("Desconectado con mensaje:" + str(mqtt.connack_string(rc)), flush=True)
+    print("Reconectando...", flush=True)
     client.reconnect()
 
 
@@ -151,7 +151,7 @@ def setup_mqtt():
     Configura el cliente MQTT para conectarse al broker.
     '''
 
-    print("Iniciando cliente MQTT...", settings.MQTT_HOST, settings.MQTT_PORT)
+    print("Iniciando cliente MQTT...", settings.MQTT_HOST, settings.MQTT_PORT, flush=True)
     global client
     try:
         client = mqtt.Client(settings.MQTT_USER_PUB)
@@ -167,16 +167,16 @@ def setup_mqtt():
         client.connect(settings.MQTT_HOST, settings.MQTT_PORT)
 
     except Exception as e:
-        print('Ocurrió un error al conectar con el bróker MQTT:', e)
+        print('Ocurrió un error al conectar con el bróker MQTT:', e, flush=True)
 
 
 def start_cron():
     '''
     Inicia el cron que se encarga de ejecutar la función analyze_data cada 5 minutos.
     '''
-    print("Iniciando cron...")
+    print("Iniciando cron...", flush=True)
     schedule.every(2).minutes.do(analyze_data)
-    print("Servicio de control iniciado")
+    print("Servicio de control iniciado", flush=True)
     while 1:
         schedule.run_pending()
         time.sleep(1)
