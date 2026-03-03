@@ -70,7 +70,7 @@ def check_fires():
     Retorna una lista con diccionarios con pais, estado, ciudad, usuario y mensaje de alerta
     en caso de que se detecte una posible condición de incendio.
     Para detectar esta condición, se verifica por cada estación de medición,
-    si las últimas 5 temperaturas registradas han crecido y las últimas 5 humedades han disminuido.
+    si el promedio de las últimas 5 temperaturas es mayor a 30 y el promedio de las últimas 5 humedades es menor a 30.
     """
 
     print("Iniciando check_fires...", flush=True)
@@ -100,12 +100,12 @@ def check_fires():
         print(f"Datos de temperatura: {len(temperature_values)}, Datos de humedad: {len(humidity_values)}", flush=True)
         
         if len(temperature_values) == 5 and len(humidity_values) == 5:
-            temp_increasing = all(temperature_values[i] < temperature_values[i+1] for i in range(4))
-            humidity_decreasing = all(humidity_values[i] > humidity_values[i+1] for i in range(4))
+            avg_temp = sum(temperature_values) / 5
+            avg_humidity = sum(humidity_values) / 5
+
+            print(f"Promedio de temperatura: {avg_temp}, Promedio de humedad: {avg_humidity}", flush=True)
             
-            print(f"Temperatura aumentando: {temp_increasing}, Humedad disminuyendo: {humidity_decreasing}", flush=True)
-            
-            if temp_increasing and humidity_decreasing:
+            if avg_temp > 30 and avg_humidity < 30:
                 station_obj = station_data[0].station
                 country = station_obj.location.country.name
                 state = station_obj.location.state.name
