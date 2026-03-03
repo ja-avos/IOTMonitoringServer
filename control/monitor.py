@@ -97,11 +97,11 @@ def check_fires():
         temperature_values = temperature_values[-5:]
         humidity_values = humidity_values[-5:]
         
-        print(f"Datos de temperatura: {len(temperature_data)}, Datos de humedad: {len(humidity_data)}", flush=True)
+        print(f"Datos de temperatura: {len(temperature_values)}, Datos de humedad: {len(humidity_values)}", flush=True)
         
-        if len(temperature_data) == 5 and len(humidity_data) == 5:
-            temp_increasing = all(temperature_data[i].avg_value < temperature_data[i+1].avg_value for i in range(4))
-            humidity_decreasing = all(humidity_data[i].avg_value > humidity_data[i+1].avg_value for i in range(4))
+        if len(temperature_values) == 5 and len(humidity_values) == 5:
+            temp_increasing = all(temperature_values[i] < temperature_values[i+1] for i in range(4))
+            humidity_decreasing = all(humidity_values[i] > humidity_values[i+1] for i in range(4))
             
             print(f"Temperatura aumentando: {temp_increasing}, Humedad disminuyendo: {humidity_decreasing}", flush=True)
             
