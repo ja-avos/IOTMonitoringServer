@@ -83,9 +83,19 @@ def check_fires():
     alerts = []
     for station in stations:
         print(f"Verificando estación: {station}", flush=True)
-        station_data = data.filter(station=station).select_related('measurement').order_by('-base_time')
-        temperature_data = [d for d in station_data if d.measurement.name.lower() == "temperature"][:5]
-        humidity_data = [d for d in station_data if d.measurement.name.lower() == "humidity"][:5]
+        station_data = data.filter(station=station).select_related('measurement').order_by('base_time')
+        temperature_data = [d for d in station_data if d.measurement.name.lower() == "temperature"][-5:]
+        temperature_values = []
+        for d in temperature_data:
+            temperature_values.extend(d.values)
+
+        humidity_data = [d for d in station_data if d.measurement.name.lower() == "humidity"][-5:]
+        humidity_values = []
+        for d in humidity_data:
+            humidity_values.extend(d.values)
+        
+        temperature_values = temperature_values[-5:]
+        humidity_values = humidity_values[-5:]
         
         print(f"Datos de temperatura: {len(temperature_data)}, Datos de humedad: {len(humidity_data)}", flush=True)
         
@@ -192,7 +202,4 @@ def start_cron():
     print("Servicio de control iniciado", flush=True)
     while 1:
         schedule.run_pending()
-        next_run = schedule.idle_seconds()
-        if next_run is not None:
-            print(f"Próxima ejecución en: {datetime.now() + timedelta(seconds=next_run)}", flush=True)
         time.sleep(1)
