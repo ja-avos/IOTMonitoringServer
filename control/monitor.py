@@ -9,6 +9,7 @@ import schedule
 import time
 import enum
 from django.conf import settings
+import json
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, settings.MQTT_USER_PUB)
 
@@ -131,10 +132,10 @@ def check_fires():
 def send_message(message: Message, country: str, state: str, city: str, user: str):
     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
     print(datetime.now(), "Sending message to {}: {}".format(topic, message.payload), flush=True)
-    client.publish(topic, {
+    client.publish(topic, json.dumps({
         "type": message.msg_type.value,
         "message": message.payload
-    })
+    }))
 
 def analyze_data():
     # Consulta todos los datos de la última hora, los agrupa por estación y variable
