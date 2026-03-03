@@ -131,7 +131,10 @@ def check_fires():
 def send_message(message: Message, country: str, state: str, city: str, user: str):
     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
     print(datetime.now(), "Sending message to {}: {}".format(topic, message.payload), flush=True)
-    client.publish(topic, message.payload)
+    client.publish(topic, {
+        "type": message.msg_type.value,
+        "message": message.payload
+    })
 
 def analyze_data():
     # Consulta todos los datos de la última hora, los agrupa por estación y variable
