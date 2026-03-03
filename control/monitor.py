@@ -103,6 +103,8 @@ def check_fires():
                     )
                 })
 
+    return alerts
+
 def send_message(message: Message, country: str, state: str, city: str, user: str):
     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
     print(datetime.now(), "Sending message to {}: {}".format(topic, message.payload))
