@@ -179,4 +179,7 @@ def start_cron():
     print("Servicio de control iniciado", flush=True)
     while 1:
         schedule.run_pending()
+        next_run = schedule.idle_seconds()
+        if next_run is not None:
+            print(f"Próxima ejecución en: {datetime.now() + timedelta(seconds=next_run)}", flush=True)
         time.sleep(1)
