@@ -73,25 +73,37 @@ def check_fires():
     si las últimas 5 temperaturas registradas han crecido y las últimas 5 humedades han disminuido.
     """
 
+    print("Iniciando check_fires...", flush=True)
     data = Data.objects.filter(
         base_time__gte=datetime.now() - timedelta(hours=1))
     
     stations = set(data.values_list('station', flat=True))
+    print(f"Estaciones encontradas: {len(stations)}", flush=True)
 
     alerts = []
     for station in stations:
-        station_data = data.filter(station=station).select_related('measurement').order_by('-base_time')[:5]
-        temperature_data = [d for d in station_data if d.measurement.name.lower() == "temperature"]
-        humidity_data = [d for d in station_data if d.measurement.name.lower() == "humidity"]
+        print(f"Verificando estación: {station}", flush=True)
+        station_data = data.filter(station=station).select_related('measurement').order_by('-base_time')
+        temperature_data = [d for d in station_data if d.measurement.name.lower() == "temperature"][:5]
+        humidity_data = [d for d in station_data if d.measurement.name.lower() == "humidity"][:5]
+        
+        print(f"Datos de temperatura: {len(temperature_data)}, Datos de humedad: {len(humidity_data)}", flush=True)
+        
         if len(temperature_data) == 5 and len(humidity_data) == 5:
             temp_increasing = all(temperature_data[i].avg_value < temperature_data[i+1].avg_value for i in range(4))
             humidity_decreasing = all(humidity_data[i].avg_value > humidity_data[i+1].avg_value for i in range(4))
+            
+            print(f"Temperatura aumentando: {temp_increasing}, Humedad disminuyendo: {humidity_decreasing}", flush=True)
+            
             if temp_increasing and humidity_decreasing:
                 station_obj = station_data[0].station
                 country = station_obj.location.country.name
                 state = station_obj.location.state.name
                 city = station_obj.location.city.name
                 user = station_obj.user.username
+                
+                print(f"ALERTA DE INCENDIO: {country} - {state} - {city} - {user}", flush=True)
+                
                 alerts.append({
                     "country": country,
                     "state": state,
@@ -103,6 +115,7 @@ def check_fires():
                     )
                 })
 
+    print(f"Total de alertas de incendio: {len(alerts)}", flush=True)
     return alerts
 
 def send_message(message: Message, country: str, state: str, city: str, user: str):
