@@ -24,13 +24,15 @@ def get_coordinates(city: str, state: str, country: str) -> Tuple[float, float]:
     country = ' '.join(country.split('+'))
     url = f'https://nominatim.openstreetmap.org/search?q={city},{state},{country}&format=json&limit=1'
 
-    r = requests.get(url)
-    geocode_data = r.json()[0] if len(r.json()) > 0 else None
-    if r.status_code == 200 and geocode_data:
-        lat = geocode_data.get('lat', 0)
-        lng = geocode_data.get('lon', 0)
-        lat = float(lat)
-        lng = float(lng)
+    headers = {'User-Agent': 'IOTMonitoringServer-ja.avelino/1.0'}
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200:
+        geocode_data = r.json()[0] if len(r.json()) > 0 else None
+        if geocode_data:
+            lat = geocode_data.get('lat', 0)
+            lng = geocode_data.get('lon', 0)
+            lat = float(lat)
+            lng = float(lng)
     return lat, lng
 
 
