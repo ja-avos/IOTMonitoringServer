@@ -122,7 +122,7 @@ def create_data(
     base_time = datetime(time.year, time.month, time.day,
                          time.hour, tzinfo=time.tzinfo)
     ts = int(base_time.timestamp() * 1000000)
-    print("Time:", time)
+    print("Time:", time, flush=True)
     secs = int(time.timestamp() % 3600)
 
     data, created = Data.objects.get_or_create(

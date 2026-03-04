@@ -26,7 +26,7 @@ def on_message(client: mqtt.Client, userdata, message: mqtt.MQTTMessage):
     try:
         time = datetime.now()
         payload = message.payload.decode("utf-8")
-        print("payload: " + payload)
+        print("payload: " + payload, flush=True)
         payloadJson = json.loads(payload)
         country, state, city, user = utils.get_topic_data(
             message.topic)
@@ -43,13 +43,13 @@ def on_message(client: mqtt.Client, userdata, message: mqtt.MQTTMessage):
                 float(payloadJson[measure]), sensor_obj, variable_obj, time)
 
     except Exception as e:
-        print('Ocurrió un error procesando el paquete MQTT', e)
+        print('Ocurrió un error procesando el paquete MQTT', e, flush=True)
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Suscribiendo al tópico: " + settings.TOPIC)
+    print("Suscribiendo al tópico: " + settings.TOPIC, flush=True)
     client.subscribe(settings.TOPIC)
-    print("Servicio de recepcion de datos iniciado")
+    print("Servicio de recepcion de datos iniciado", flush=True)
 
 
 def on_disconnect(client: mqtt.Client, userdata, rc):
@@ -57,8 +57,8 @@ def on_disconnect(client: mqtt.Client, userdata, rc):
     Función que se ejecuta cuando se desconecta del broker.
     Intenta reconectar al bróker.
     '''
-    print("Desconectado con mensaje:" + str(mqtt.connack_string(rc)))
-    print("Reconectando...")
+    print("Desconectado con mensaje:" + str(mqtt.connack_string(rc)), flush=True)
+    print("Reconectando...", flush=True)
     client.reconnect()
 
 def fix_stations_locations():
@@ -77,7 +77,7 @@ def fix_stations_locations():
         station.location.lng = lng
         station.location.save()
 
-print("Iniciando cliente MQTT...", settings.MQTT_HOST, settings.MQTT_PORT)
+print("Iniciando cliente MQTT...", settings.MQTT_HOST, settings.MQTT_PORT, flush=True)
 try:
     fix_stations_locations()
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, settings.MQTT_USER)
@@ -93,4 +93,4 @@ try:
     client.connect(settings.MQTT_HOST, settings.MQTT_PORT)
 
 except Exception as e:
-    print('Ocurrió un error al conectar con el bróker MQTT:', e)
+    print('Ocurrió un error al conectar con el bróker MQTT:', e, flush=True)

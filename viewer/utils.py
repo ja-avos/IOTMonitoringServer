@@ -26,30 +26,30 @@ def get_last_week_data(user, city, state, country):
                 city=cityO, state=stateO, country=countryO
             )
         except:
-            print("Specified location does not exist")
+            print("Specified location does not exist", flush=True)
         print("LAST_WEEK: Got user and lcoation:",
-              user, city, state, country)
+              user, city, state, country, flush=True)
         if userO == None or location == None:
             raise "No existe el usuario o ubicación indicada"
         stationO = Station.objects.get(user=userO, location=location)
-        print("LAST_WEEK: Got station:", user, location, stationO)
+        print("LAST_WEEK: Got station:", user, location, stationO, flush=True)
         if stationO == None:
             raise "No hay datos para esa ubicación"
         measurementsO = get_measurements()
-        print("LAST_WEEK: Measurements got: ", measurementsO)
+        print("LAST_WEEK: Measurements got: ", measurementsO, flush=True)
         for measure in measurementsO:
-            print("LAST_WEEK: Filtering measure: ", measure)
+            print("LAST_WEEK: Filtering measure: ", measure, flush=True)
             # time__gte=start.date() Filtro para último día
             start_ts = int(start.timestamp() * 1000000)
             raw_data = Data.objects.filter(
                 station=stationO, time__gte=start_ts, measurement=measure
             ).order_by("-base_time")[:2]
-            print("LAST_WEEK: Raw data: ", len(raw_data))
+            print("LAST_WEEK: Raw data: ", len(raw_data), flush=True)
             data = []
             for reg in raw_data:
                 values = reg.values
                 times = reg.times
-                print("Len vals: ", len(values), "Len times: ", len(times))
+                print("Len vals: ", len(values), "Len times: ", len(times), flush=True)
                 for i in range(len(values)):
                     data.append(
                         (
@@ -71,7 +71,7 @@ def get_last_week_data(user, city, state, country):
                 "data": data,
             }
     except Exception as error:
-        print("Error en consulta de datos:", error)
+        print("Error en consulta de datos:", error, flush=True)
         traceback.print_exc()
 
     return result, measurementsO
@@ -105,7 +105,7 @@ El template espera un contexto de este tipo:
 }
 """
     context = {}
-    print("CONTEXT: getting context data")
+    print("CONTEXT: getting context data", flush=True)
     try:
         userParam = request.user.username
         cityParam = request.GET.get("city", None)
@@ -117,21 +117,22 @@ El template espera un contexto de este tipo:
             cityParam,
             stateParam,
             countryParam,
+            flush=True
         )
         if not cityParam and not stateParam and not countryParam:
             user = User.objects.get(username=userParam)
-            print("CONTEXT: getting user db: ", user)
+            print("CONTEXT: getting user db: ", user, flush=True)
             stations = Station.objects.filter(user=user)
-            print("CONTEXT: getting stations db: ", stations)
+            print("CONTEXT: getting stations db: ", stations, flush=True)
             station = stations[0] if len(stations) > 0 else None
-            print("CONTEXT: getting first station: ", station)
+            print("CONTEXT: getting first station: ", station, flush=True)
             if station != None:
                 cityParam = station.location.city.name
                 stateParam = station.location.state.name
                 countryParam = station.location.country.name
             else:
                 return context
-        print("CONTEXT: getting last week data and measurements")
+        print("CONTEXT: getting last week data and measurements", flush=True)
         context["data"], context["measurements"] = get_last_week_data(
             userParam, cityParam, stateParam, countryParam
         )
@@ -140,6 +141,7 @@ El template espera un contexto de este tipo:
             cityParam,
             stateParam,
             countryParam,
+            flush=True
         )
         context["selectedCity"] = City.objects.get(name=cityParam)
         context["selectedState"] = State.objects.get(name=stateParam)
@@ -150,7 +152,7 @@ El template espera un contexto de este tipo:
             country=context["selectedCountry"],
         )
     except Exception as e:
-        print("Error get_context_data. User: " + userParam, e)
+        print("Error get_context_data. User: " + userParam, e, flush=True)
     return context
 
 

@@ -37,7 +37,7 @@ def realtime_data(request):
         try:
             body = json.loads(request.body.decode("utf-8"))
             action = body["action"]
-            print("action:", action)
+            print("action:", action, flush=True)
             userParam = request.user.username
             if action == "get_data":
                 cityName = body["city"]
