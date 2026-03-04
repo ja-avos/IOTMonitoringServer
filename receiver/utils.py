@@ -22,12 +22,13 @@ def get_coordinates(city: str, state: str, country: str) -> Tuple[float, float]:
     city = ' '.join(city.split('+'))
     state = ' '.join(state.split('+'))
     country = ' '.join(country.split('+'))
-    url = f'https://geocode.xyz/{city},{state},{country}?json=1'
+    url = f'https://nominatim.openstreetmap.org/search?q={city},{state},{country}&format=json&limit=1'
 
     r = requests.get(url)
-    if r.status_code == 200:
-        lat = r.json().get('latt', 0)
-        lng = r.json().get('longt', 0)
+    geocode_data = r.json()[0] if len(r.json()) > 0 else None
+    if r.status_code == 200 and geocode_data:
+        lat = geocode_data.get('lat', 0)
+        lng = geocode_data.get('lon', 0)
         lat = float(lat)
         lng = float(lng)
     return lat, lng

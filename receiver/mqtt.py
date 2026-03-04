@@ -61,9 +61,25 @@ def on_disconnect(client: mqtt.Client, userdata, rc):
     print("Reconectando...")
     client.reconnect()
 
+def fix_stations_locations():
+    '''
+    Función que arregla las estaciones que no tienen latitud y longitud.
+    '''
+    stations = utils.get_stations_without_coordinates()
+    for station in stations:
+        if station.location.lat is not None and station.location.lng is not None:
+            continue
+        city = station.location.city.name
+        state = station.location.state.name
+        country = station.location.country.name
+        lat, lng = utils.get_coordinates(city, state, country)
+        station.location.lat = lat
+        station.location.lng = lng
+        station.location.save()
 
 print("Iniciando cliente MQTT...", settings.MQTT_HOST, settings.MQTT_PORT)
 try:
+    fix_stations_locations()
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, settings.MQTT_USER)
     client.on_connect = on_connect
     client.on_message = on_message
