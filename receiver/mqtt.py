@@ -1,4 +1,5 @@
 from datetime import datetime
+import traceback
 
 from receiver.models import Station
 from . import utils
@@ -95,4 +96,5 @@ try:
     client.connect(settings.MQTT_HOST, settings.MQTT_PORT)
 
 except Exception as e:
+    traceback.print_exc()
     print('Ocurrió un error al conectar con el bróker MQTT:', e, flush=True)
