@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from receiver.models import Station
 from . import utils
 import json
 import os
@@ -65,7 +67,7 @@ def fix_stations_locations():
     '''
     Función que arregla las estaciones que no tienen latitud y longitud.
     '''
-    stations = utils.get_stations_without_coordinates()
+    stations = Station.objects.all()
     for station in stations:
         if station.location.lat is not None and station.location.lng is not None:
             continue
